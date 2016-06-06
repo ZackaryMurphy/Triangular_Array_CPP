@@ -64,4 +64,6 @@ void init_test() {
     catch (std::out_of_range& e) {
         std::cout<<e.what()<<std::endl;
     }
+
+    std::cout<<i_test_array[0][0]<<std::endl;
 }
