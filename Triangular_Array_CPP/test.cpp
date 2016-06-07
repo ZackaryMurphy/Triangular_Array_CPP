@@ -66,4 +66,22 @@ void init_test() {
     }
 
     std::cout<<i_test_array[0][0]<<std::endl;
+
+    i_test_array[0][0] = 99;
+
+    std::cout<<i_test_array[0][0]<<std::endl;
+
+    try {
+        std::cout<<i_test_array[0][9]<<std::endl;
+    }
+    catch (std::exception& e) {
+        std::cout<<e.what()<<std::endl;
+    }
+
+    try {
+        std::cout<<i_test_array[-1][-1]<<std::endl;
+    }
+    catch (std::exception& e) {
+        std::cout<<e.what()<<std::endl;
+    }
 }

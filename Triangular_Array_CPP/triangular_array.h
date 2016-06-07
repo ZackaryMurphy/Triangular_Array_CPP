@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 /*
-TODO: ADD ITERATOR, OVERRIDE Vector_Guard(const Vector_Guard&), OVERRIDE operator=(const Vector_Guard&), REPLACE POINTERS WITH SMART POINTERS
+TODO: ADD ITERATOR
 */
 
 template <typename data_type>
@@ -23,7 +23,9 @@ class Triangular_Array {
                 std::vector<data_type>* guard_vector;
             public:
                 Vector_Guard(std::vector<data_type> *source);
+                Vector_Guard(const Triangular_Array<data_type>::Vector_Guard& origin);
                 ~Vector_Guard();
+                Vector_Guard& operator=(const Triangular_Array<data_type>::Vector_Guard& src);
                 data_type& operator[](unsigned int index);
         };
 
@@ -126,8 +128,19 @@ Triangular_Array<data_type>::Vector_Guard::Vector_Guard(std::vector<data_type> *
 {}
 
 template <typename data_type>
+Triangular_Array<data_type>::Vector_Guard::Vector_Guard(const Triangular_Array<data_type>::Vector_Guard& origin) {
+    guard_vector = origin.guard_vector;
+}
+
+template <typename data_type>
 Triangular_Array<data_type>::Vector_Guard::~Vector_Guard() {
     guard_vector = NULL;
+}
+
+template <typename data_type>
+typename Triangular_Array<data_type>::Vector_Guard& Triangular_Array<data_type>::Vector_Guard::operator=(const Triangular_Array<data_type>::Vector_Guard& src) {
+    this.guard_vector = src.guard_vector;
+    return this;
 }
 
 template <typename data_type>
