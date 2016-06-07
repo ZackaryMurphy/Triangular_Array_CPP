@@ -15,7 +15,20 @@ class Triangular_Array {
         unsigned int dimension;
         std::vector<std::vector<data_type>> rows;
         void range_check(unsigned int row, unsigned int col) const;
+        void row_range_check(unsigned int row) const;
         void column_range_check(unsigned int row, unsigned int col) const;
+        class Vector_Guard {
+            private:
+            protected:
+                std::vector<data_type>* guard_vector;
+            public:
+                Vector_Guard(std::vector<data_type> *source);
+                Vector_Guard(const Triangular_Array<data_type>::Vector_Guard& origin);
+                ~Vector_Guard();
+                Vector_Guard& operator=(const Triangular_Array<data_type>::Vector_Guard& src);
+                data_type& operator[](unsigned int index);
+        };
+
     public:
         explicit Triangular_Array(unsigned int desired_dimension = 8);
 
@@ -28,6 +41,8 @@ class Triangular_Array {
         unsigned int get_dimension();
 
         void print() const;
+
+        Vector_Guard& operator[](unsigned int index);
 };
 
 template <typename data_type>
@@ -42,6 +57,13 @@ Triangular_Array<data_type>::Triangular_Array(unsigned int desired_dimension) :
 template <typename data_type>
 void Triangular_Array<data_type>::range_check(unsigned int row, unsigned int col) const {
     if (row >= dimension || col > row) {
+        throw std::out_of_range("Triangular Array Out of Range Error: Desired element is out of range\n");
+    }
+}
+
+template <typename data_type>
+void Triangular_Array<data_type>::row_range_check(unsigned int row) const {
+    if (row >= dimension) {
         throw std::out_of_range("Triangular Array Out of Range Error: Desired element is out of range\n");
     }
 }
@@ -93,6 +115,40 @@ void Triangular_Array<data_type>::print() const {
         std::cout<<std::endl;
     }
     std::cout<<std::endl;
+}
+
+template <typename data_type>
+typename Triangular_Array<data_type>::Vector_Guard& Triangular_Array<data_type>::operator[](unsigned int index) {
+    row_range_check(index);
+    return *(new Vector_Guard(&(rows[index])));
+}
+
+template <typename data_type>
+Triangular_Array<data_type>::Vector_Guard::Vector_Guard(std::vector<data_type> *source) : guard_vector(source)
+{}
+
+template <typename data_type>
+Triangular_Array<data_type>::Vector_Guard::Vector_Guard(const Triangular_Array<data_type>::Vector_Guard& origin) {
+    guard_vector = origin.guard_vector;
+}
+
+template <typename data_type>
+Triangular_Array<data_type>::Vector_Guard::~Vector_Guard() {
+    guard_vector = NULL;
+}
+
+template <typename data_type>
+typename Triangular_Array<data_type>::Vector_Guard& Triangular_Array<data_type>::Vector_Guard::operator=(const Triangular_Array<data_type>::Vector_Guard& src) {
+    this.guard_vector = src.guard_vector;
+    return this;
+}
+
+template <typename data_type>
+data_type& Triangular_Array<data_type>::Vector_Guard::operator[](unsigned int index) {
+    if (index >= guard_vector->size()) {
+        throw std::out_of_range("Triangular Array Out of Range Error: Desired element is out of range\n");
+    }
+    return (*guard_vector)[index];
 }
 
 #endif // TRIANGULAR_ARRAY_H_INCLUDED
